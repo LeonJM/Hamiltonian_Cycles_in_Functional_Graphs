@@ -3,11 +3,18 @@
 #include <vector>
 #include <cmath>
 #include <time.h>
+#include <fstream>
+#include <string>
 
-std::vector<int> constants; // vertices 0, 1, 2, .., n-1
+std::string primeFile = "primes1000.txt";
+
+int N; // number of vertices.
 std::vector<int> tempConstantCombs;
-std::list<std::vector<int>> constantCombs; // combinations of constants
+std::list<std::vector<int>> constantCombs; // combinations of constants.
 
+/**
+ * The mani graph class.
+ * */
 class Graph {
     int n; // number of vertices
     std::list<int> *l; // adjacency list
@@ -49,21 +56,24 @@ class Graph {
 
 };
 
+/**
+ * Generate all combinations up to n.
+ * */
 void generateComb(int offset, int k) {
     //base case
     if (k == 0) {
-        // pretty_print(tempConstantCombs);
         constantCombs.push_back(tempConstantCombs);
         return;
     }
 
-    for (int i = offset; i <=  constants.size() - k; ++i) {
-        tempConstantCombs.push_back(constants[i]);
+    for (int i = offset; i <=  N - k; ++i) {
+        tempConstantCombs.push_back(i);
         generateComb(i + 1, k - 1);
         tempConstantCombs.pop_back();
     }
 }
 
+// visual aid - debugging function
 void printCombinations() {
     for (std::vector<int> i : constantCombs) {
         for (int j : i) {
@@ -77,41 +87,48 @@ int main() {
 
     clock_t startTime = clock();
 
-    // setup
-    // int n = 3;
-    // for (int i = 0; i < n; i++) {
-    //     constants.push_back(i);
-    // }
-    // for (int i = 0; i <= n; i ++) {
-    //     generateComb(0, i);
-    // }
+    std::ifstream inFile(primeFile);
+    if (!inFile.is_open()) {
+        std::cerr << "Could not open file " << primeFile << std::endl;
+        return 1;
+    }
 
-    // for (std::vector<int> i : constantCombs) {
-    //     Graph g(n, i);
-    //     g.printAdjList();
-    // }
-
-    std::vector<int> primes = {1, 3, 5, 7};
-    for (int n : primes) {
-        for (int i = 0; i < n; i ++) {
-            constants.push_back(i);
+    std::vector<int> primes; 
+    std::string str;
+    int prime;
+    while (getline(inFile, str, ',')) {
+        prime = stoi(str);
+        if (prime > 19) { // reads up to that prime number.
+            break;
         }
+        primes.push_back(prime);
+    }
+    inFile.close();
+
+    // std::vector<int> primes = {5};
+    for (int n : primes) {
+        // setup
+        N = n;
         for (int i = 0; i <= n; i ++) {
             generateComb(0, i);
         }
 
-        for (std::vector<int> i : constantCombs) {
-            Graph g(n, i);
-            std::cout << "prime field: " << n << " constants: ";
-            for (int j : i) {
-                std::cout << j << ", ";
-            }
-            std::cout << std::endl;
-            g.printAdjList();
-        }
+        printCombinations();
+
+        // graph generation
+        // for (std::vector<int> i : constantCombs) {
+        //     Graph g(n, i);
+
+        //     // std::cout << "prime field: " << n << " constants: ";
+        //     // for (int j : i) {
+        //     //     std::cout << j << ", ";
+        //     // }
+        //     // std::cout << std::endl;
+
+        //     // g.printAdjList();
+        // }
 
         // reset global values
-        constants.clear();
         constantCombs.clear();
 
     }
