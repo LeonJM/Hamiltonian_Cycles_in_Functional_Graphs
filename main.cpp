@@ -8,12 +8,16 @@
 #include <algorithm>
 #include <iterator>
 
+
 std::string primeFile = "primes1000.txt";
 std::string resultFile = "results_one-per-prime-field.csv";
 
 int N; // number of vertices
 std::vector<int> tempConstantCombs;
 std::list<std::vector<int>> constantCombs; // combinations of constants
+
+std::ofstream outFile(resultFile, std::ios::out | std::ios::app); // save results here
+
 
 /**
  * main graph class
@@ -22,13 +26,14 @@ class Graph {
     int n; // number of vertices
     std::list<int> *l; // adjacency list
     std::vector<int> constants; // constants of functions 
-    bool found = false;
+    bool* fndPtr;
 
     public:
-        Graph(int N, std::vector<int> inputs) {
+        Graph(int N, std::vector<int> inputs, bool* fndPtr) {
             this->n = N;
             this->l = new std::list<int>[N];
             this->constants = inputs;
+            this->fndPtr = fndPtr;
             this->addInputs(inputs);
         }
 
@@ -42,6 +47,9 @@ class Graph {
             }
         }
 
+        /**
+         * function that finds the "first" HC in the graph
+         * */
         void hasHC() {
             int *path = new int[n];
             for (int i = 0; i < n; i ++) {
@@ -72,15 +80,7 @@ class Graph {
             if (pos == n) {
                 // has HC
                 if (std::find(l[path[pos-1]].begin(), l[path[pos-1]].end(), 0) != l[path[pos-1]].end()) { // is HC?
-
-                    // std::cout << "HamCycle: ";
-                    // for (int i = 0; i < n; i ++) {
-                    //     std::cout << path[i] << ", ";
-                    // }
-                    // std::cout << "0" << std::endl;
-
                     // save results to a file
-                    std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
                     outFile << n << ", ";
                     outFile << constants.size() << ", ";
                     for (int i : constants) {
@@ -91,18 +91,15 @@ class Graph {
                         outFile << path[i] << " -> ";
                     }
                     outFile << 0 << "\n";
-                    outFile.close();
+                    *fndPtr = true;
 
                     return true;
-
                 } else {
                     return false;
                 }
             }
 
             for (int v = 1; v < n; v ++) {
-                if (found) {
-                }
                 if (isSafe(v, path, pos)) {
                     path[pos] = v;
                     if (hasHCUtil(path, pos + 1)) {
@@ -163,7 +160,7 @@ void printCombinations() {
 }
 
 int main() {
-
+    std::cout << "Program Start" << std::endl;
     clock_t startTime = clock();
 
     // open file with list of prime numbers
@@ -179,34 +176,39 @@ int main() {
     int prime;
     while (getline(inFile, str, ',')) {
         prime = stoi(str);
-        if (prime > 11) { // reads up to that prime number
+        if (prime > 19) { // reads up to that prime number
             break;
         }
         primes.push_back(prime);
     }
     inFile.close();
 
-    primes = {11}; // manual field - comment out when not in use
+    // primes = {11}; // manual field - comment out when not in use
     for (int n : primes) {
         // setup
         N = n;
-        for (int i = 0; i <= n; i ++) {
+        for (int i = 2; i <= n/2 + 1; i ++) { // range is because of Ghouila-Houri's theorem
             generateComb(0, i);
         }
+        bool found = false;
+        bool* fndPtr = &found;
 
         // printCombinations();
 
         // graph generation
         for (std::vector<int> i : constantCombs) {
-            Graph g(n, i);
-
-            std::cout << "prime field: " << n << " constants: ";
-            for (int j : i) {
-                std::cout << j << ", ";
+            if (found) {
+                break; // only want to find the first HC possible for the prime field
             }
-            std::cout << std::endl;
+            Graph g(n, i, fndPtr);
 
-            g.printAdjList();
+            // std::cout << "prime field: " << n << " constants: ";
+            // for (int j : i) {
+            //     std::cout << j << ", ";
+            // }
+            // std::cout << std::endl;
+            // g.printAdjList();
+
             g.hasHC();
             // std::cout << std::endl;
         }
@@ -215,6 +217,8 @@ int main() {
         constantCombs.clear();
     }
     
+    outFile.close();
+
     clock_t endTime = clock();
     double runTime = double(endTime - startTime)/CLOCKS_PER_SEC;
     printf("Run Time: %.3f seconds.", runTime);
