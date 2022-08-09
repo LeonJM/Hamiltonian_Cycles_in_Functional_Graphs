@@ -5,15 +5,17 @@
 #include <time.h>
 #include <fstream>
 #include <string>
+#include <algorithm>
+#include <iterator>
 
 std::string primeFile = "primes1000.txt";
 
-int N; // number of vertices.
+int N; // number of vertices
 std::vector<int> tempConstantCombs;
-std::list<std::vector<int>> constantCombs; // combinations of constants.
+std::list<std::vector<int>> constantCombs; // combinations of constants
 
 /**
- * The mani graph class.
+ * main graph class
  * */
 class Graph {
     int n; // number of vertices
@@ -22,7 +24,7 @@ class Graph {
     public:
         Graph(int N, std::vector<int> inputs) {
             this->n = N;
-            l = new std::list<int>[N];
+            this->l = new std::list<int>[N];
             this->addInputs(inputs);
         }
 
@@ -34,6 +36,16 @@ class Graph {
                 }
                 std::cout << std::endl;
             }
+        }
+
+        void hasHC() {
+            int *path = new int[n];
+            for (int i = 0; i < n; i ++) {
+                path[i] = -1;
+            }
+
+            path[0] = 0; // start HC from vertex 0
+            hasHCUtil(path, 1); // no need to start at vertex 0
         }
 
     private:
@@ -54,13 +66,61 @@ class Graph {
             }
         }
 
+        // utility recursive function
+        bool hasHCUtil(int path[], int pos) {
+            // base case
+            if (pos == n) {
+                if (std::find(l[path[pos-1]].begin(), l[path[pos-1]].end(), 0) != l[path[pos-1]].end()) { // is HC?
+                    // has HC
+                    std::cout << "HamCycle: ";
+                    for (int i = 0; i < n; i ++) {
+                        std::cout << path[i] << ", ";
+                    }
+                    std::cout << "0" << std::endl;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            for (int v = 1; v < n; v ++) {
+                if (isSafe(v, path, pos)) {
+                    path[pos] = v;
+                    if (hasHCUtil(path, pos + 1)) {
+                        return true;
+                    }
+                    path[pos] = -1;
+                }
+            }
+
+            return false;
+        }
+
+        // utility function - does edge path[pos-1] go to v
+        bool isSafe(int v, int path[], int pos) {
+            // check if last vertex added to path connects to v
+            bool connect = (std::find(l[path[pos-1]].begin(), l[path[pos-1]].end(), v) != l[path[pos-1]].end());
+            if (!connect) {
+                return false; // last vertex added to path has no edge to v
+            }
+
+            // check if v has already been included in path
+            for (int i = 0; i < pos; i ++) {
+                if (path[i] == v) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 };
 
 /**
- * Generate all combinations up to n.
+ * generate all combinations up to n
  * */
 void generateComb(int offset, int k) {
-    //base case
+    // base case
     if (k == 0) {
         constantCombs.push_back(tempConstantCombs);
         return;
@@ -87,25 +147,27 @@ int main() {
 
     clock_t startTime = clock();
 
+    // open file with list of prime numbers
     std::ifstream inFile(primeFile);
     if (!inFile.is_open()) {
         std::cerr << "Could not open file " << primeFile << std::endl;
         return 1;
     }
 
+    // prepare a vector of prime numbers
     std::vector<int> primes; 
     std::string str;
     int prime;
     while (getline(inFile, str, ',')) {
         prime = stoi(str);
-        if (prime > 19) { // reads up to that prime number.
+        if (prime > 5) { // reads up to that prime number
             break;
         }
         primes.push_back(prime);
     }
     inFile.close();
 
-    // std::vector<int> primes = {5};
+    primes = {11}; // manual field - comment out when not in use
     for (int n : primes) {
         // setup
         N = n;
@@ -116,17 +178,19 @@ int main() {
         printCombinations();
 
         // graph generation
-        // for (std::vector<int> i : constantCombs) {
-        //     Graph g(n, i);
+        for (std::vector<int> i : constantCombs) {
+            Graph g(n, i);
 
-        //     // std::cout << "prime field: " << n << " constants: ";
-        //     // for (int j : i) {
-        //     //     std::cout << j << ", ";
-        //     // }
-        //     // std::cout << std::endl;
+            std::cout << "prime field: " << n << " constants: ";
+            for (int j : i) {
+                std::cout << j << ", ";
+            }
+            std::cout << std::endl;
 
-        //     // g.printAdjList();
-        // }
+            g.printAdjList();
+            g.hasHC();
+            std::cout << std::endl;
+        }
 
         // reset global values
         constantCombs.clear();
