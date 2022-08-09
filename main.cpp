@@ -9,6 +9,7 @@
 #include <iterator>
 
 std::string primeFile = "primes1000.txt";
+std::string resultFile = "results_one-per-prime-field.csv";
 
 int N; // number of vertices
 std::vector<int> tempConstantCombs;
@@ -20,11 +21,14 @@ std::list<std::vector<int>> constantCombs; // combinations of constants
 class Graph {
     int n; // number of vertices
     std::list<int> *l; // adjacency list
+    std::vector<int> constants; // constants of functions 
+    bool found = false;
 
     public:
         Graph(int N, std::vector<int> inputs) {
             this->n = N;
             this->l = new std::list<int>[N];
+            this->constants = inputs;
             this->addInputs(inputs);
         }
 
@@ -49,10 +53,6 @@ class Graph {
         }
 
     private:
-        void addEdge(int x, int y) {
-            l[x].push_back(y);
-        }
-
         /**
          * adds edge from x to f(x)
          * */
@@ -61,7 +61,7 @@ class Graph {
                 for (int i = 0; i < n; i ++) {
                     int temp = pow(i, 2) + a;
                     temp = temp%n;
-                    this->addEdge(i, temp);
+                    l[i].push_back(temp);
                 }
             }
         }
@@ -70,20 +70,39 @@ class Graph {
         bool hasHCUtil(int path[], int pos) {
             // base case
             if (pos == n) {
+                // has HC
                 if (std::find(l[path[pos-1]].begin(), l[path[pos-1]].end(), 0) != l[path[pos-1]].end()) { // is HC?
-                    // has HC
-                    std::cout << "HamCycle: ";
-                    for (int i = 0; i < n; i ++) {
-                        std::cout << path[i] << ", ";
+
+                    // std::cout << "HamCycle: ";
+                    // for (int i = 0; i < n; i ++) {
+                    //     std::cout << path[i] << ", ";
+                    // }
+                    // std::cout << "0" << std::endl;
+
+                    // save results to a file
+                    std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
+                    outFile << n << ", ";
+                    outFile << constants.size() << ", ";
+                    for (int i : constants) {
+                        outFile << i << "_";
                     }
-                    std::cout << "0" << std::endl;
+                    outFile << ", ";
+                    for (int i = 0; i < n; i ++) {
+                        outFile << path[i] << " -> ";
+                    }
+                    outFile << 0 << "\n";
+                    outFile.close();
+
                     return true;
+
                 } else {
                     return false;
                 }
             }
 
             for (int v = 1; v < n; v ++) {
+                if (found) {
+                }
                 if (isSafe(v, path, pos)) {
                     path[pos] = v;
                     if (hasHCUtil(path, pos + 1)) {
@@ -160,7 +179,7 @@ int main() {
     int prime;
     while (getline(inFile, str, ',')) {
         prime = stoi(str);
-        if (prime > 5) { // reads up to that prime number
+        if (prime > 11) { // reads up to that prime number
             break;
         }
         primes.push_back(prime);
@@ -175,7 +194,7 @@ int main() {
             generateComb(0, i);
         }
 
-        printCombinations();
+        // printCombinations();
 
         // graph generation
         for (std::vector<int> i : constantCombs) {
@@ -189,14 +208,13 @@ int main() {
 
             g.printAdjList();
             g.hasHC();
-            std::cout << std::endl;
+            // std::cout << std::endl;
         }
 
         // reset global values
         constantCombs.clear();
-
     }
-
+    
     clock_t endTime = clock();
     double runTime = double(endTime - startTime)/CLOCKS_PER_SEC;
     printf("Run Time: %.3f seconds.", runTime);
