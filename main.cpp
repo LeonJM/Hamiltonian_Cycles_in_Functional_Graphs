@@ -2,7 +2,7 @@
 #include <list>
 #include <vector>
 #include <cmath>
-#include <time.h>
+#include <ctime>
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -10,7 +10,7 @@
 
 
 std::string primeFile = "primes1000.txt";
-std::string resultFile = "results_one-per-prime-field.csv";
+std::string resultFile = "results_final-draft.csv";
 
 int N; // number of vertices
 std::vector<int> tempConstantCombs;
@@ -133,7 +133,7 @@ class Graph {
 };
 
 /**
- * generate all combinations up to n
+ * generate all combinations from 0, 1, ..., n-1 of size k
  * */
 void generateComb(int offset, int k) {
     // base case
@@ -160,7 +160,7 @@ void printCombinations() {
 }
 
 int main() {
-    std::cout << "Program Start" << std::endl;
+    std::cout << "Program Start at " << time(NULL) << std::endl;
     clock_t startTime = clock();
 
     // open file with list of prime numbers
@@ -183,38 +183,63 @@ int main() {
     }
     inFile.close();
 
-    // primes = {11}; // manual field - comment out when not in use
+    primes = {29}; // manual field - comment out when not in use
     for (int n : primes) {
         // setup
-        N = n;
-        for (int i = 2; i <= n/2 + 1; i ++) { // range is because of Ghouila-Houri's theorem
-            generateComb(0, i);
-        }
+        N = n;  // set global variable
         bool found = false;
         bool* fndPtr = &found;
-
-        // printCombinations();
-
-        // graph generation
-        for (std::vector<int> i : constantCombs) {
+        for (int i = 2; i <= n/2 + 1; i ++) { // range is because of Ghouila-Houri's theorem
             if (found) {
-                break; // only want to find the first HC possible for the prime field
+                break;
             }
-            Graph g(n, i, fndPtr);
 
-            // std::cout << "prime field: " << n << " constants: ";
-            // for (int j : i) {
-            //     std::cout << j << ", ";
-            // }
-            // std::cout << std::endl;
-            // g.printAdjList();
+            generateComb(0, i); // O(nCi)
+            // printCombinations();
 
-            g.hasHC();
-            // std::cout << std::endl;
+            // graph generation
+            for (std::vector<int> c : constantCombs) {
+                if (found) {
+                    break;
+                }
+                
+                Graph g(n, c, fndPtr);
+                g.hasHC(); // NP-complete
+
+                // std::cout << "prime field: " << n << " constants: ";
+                // for (int j : c) {
+                //     std::cout << j << ", ";
+                // }
+                // std::cout << std::endl;
+                // g.printAdjList();
+                // std::cout << std::endl;
+
+            }
+
+            constantCombs.clear(); // reset global variable
         }
 
+
+        // graph generation
+        // for (std::vector<int> i : constantCombs) {
+        //     if (found) {
+        //         break; // only want to find the first HC possible for the prime field
+        //     }
+        //     Graph g(n, i, fndPtr);
+
+        //     // std::cout << "prime field: " << n << " constants: ";
+        //     // for (int j : i) {
+        //     //     std::cout << j << ", ";
+        //     // }
+        //     // std::cout << std::endl;
+        //     // g.printAdjList();
+
+        //     g.hasHC();
+        //     // std::cout << std::endl;
+        // }
+
         // reset global values
-        constantCombs.clear();
+        // constantCombs.clear();
     }
     
     outFile.close();
