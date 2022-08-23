@@ -10,10 +10,11 @@
 #include <algorithm>
 #include <iterator>
 #include <thread>
+#include <mutex>
 
 
 std::string primeFile = "primes1000.txt";
-std::string resultFile = "results_final-draft_V3.csv";
+std::string resultFile = "results_final-draft_V3d.csv";
 
 std::ifstream inFile(primeFile);
 std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
@@ -21,6 +22,18 @@ std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
 
 int N; // number of vertices
 std::vector<int> combination; // a combination of function's constants
+std::vector<std::thread> threads;
+std::mutex foundLock;
+
+
+// visual aid - debugging function
+void printCombination() {
+    std::cout << "N: " << N << " - ";
+    for (int i : combination) {
+        std::cout << i << " ,";
+    }
+    std::cout << std::endl;
+}
 
 
 class Graph {
@@ -61,13 +74,6 @@ class Graph {
                 path[i] = -1;
             }
 
-            // debug
-            std::cout << "Computing for HC with N=" << N << " with combination ";
-            for (int i : constants) {
-                std::cout << i << ",";
-            }
-            std::cout << std::endl;
-
             path[0] = 0; // start HC from vertex 0
             hasHCUtil(path, 1); // no need to start at vertex 0 - expensive process
         }
@@ -75,7 +81,7 @@ class Graph {
     private:
         // adds edge from x to f(x)
         void addEdges(std::vector<int> constants) {
-            // std::cout << "Adding edges..." <<std::endl; // debug
+            // std::cout << "Adding edges..." <<std::endl; // debugger
             for (int a : constants) {
                 for (int x = 0; x < N; x ++) {
                     int temp = pow(x, 2) + a;
@@ -87,7 +93,7 @@ class Graph {
 
         // counts number of nodes with indegrees
         void countInDegrees() {
-            // std::cout << "Counting indegrees..." <<std::endl; // debug
+            // std::cout << "Counting indegrees..." <<std::endl; // debugger
             for (int i = 0; i < N; i ++) {
                 adjList[i].remove(i); // removes loops
                 for (int x = 0; x < N; x ++) {
@@ -127,27 +133,17 @@ class Graph {
             // base case
             if (pos == N) {
                 // has HC
-                if (std::find(adjList[path[pos-1]].begin(), adjList[path[pos-1]].end(), 0) != adjList[path[pos-1]].end()) { // is HC?
-                    // debug
-                    std::cout << "Found HC with N=" << N << " with combination ";
-                    for (int i : constants) {
-                        std::cout << i << ",";
+                if (std::find(adjList[path[pos-1]].begin(), adjList[path[pos-1]].end(), 0) != adjList[path[pos-1]].end()) { // checks if path tail connects to path head
+                    foundLock.lock();
+                    if (*ptr) {
+                        foundLock.unlock();
+                        return true;
                     }
-                    std::cout << std::endl;
 
-                    // save results to a file
-                    outFile << N << ", ";
-                    outFile << constants.size() << ", ";
-                    for (int i : constants) {
-                        outFile << i << "_";
-                    }
-                    outFile << ", ";
-                    for (int i = 0; i < N; i ++) {
-                        outFile << path[i] << " -> ";
-                    }
-                    outFile << 0 << "\n";
-                    
-                    *ptr = true; // stops the program from searching any more graphs for the current N
+                    *ptr = true; // found a HC for current N
+                    writeToOutFile(path);
+
+                    foundLock.unlock();
                     return true;
                 } else {
                     return false;
@@ -156,7 +152,7 @@ class Graph {
 
             // recursive case
             for (int v = 1; v < N; v ++) {
-                if (*ptr) return false; // may not be false but no need to keep working once a HC is found
+                if (*ptr) return true; // no need to keep working once a HC is found
 
                 if (isSafe(v, path, pos)) {
                     path[pos] = v;
@@ -169,17 +165,21 @@ class Graph {
 
             return false;
         }
+
+        // Save HC sequence to outFile
+        void writeToOutFile(int path[]) {
+            outFile << N << ", ";
+            outFile << constants.size() << ", ";
+            for (int i : constants) {
+                outFile << i << "_";
+            }
+            outFile << ", ";
+            for (int i = 0; i < N; i ++) {
+                outFile << path[i] << " -> ";
+            }
+            outFile << 0 << "\n";
+        }
 };
-
-
-// visual aid - debugging function
-void printCombination() {
-    std::cout << "N: " << N << " - ";
-    for (int i : combination) {
-        std::cout << i << " ,";
-    }
-    std::cout << std::endl;
-}
 
 
 /**
@@ -192,9 +192,8 @@ void generateCombinations(int offset, int k, bool* ptr) {
         // printCombination(); // debugger
         Graph g(combination, ptr);
         // g.printAdjList(); // debugger
-        // g.hasHC();
-        std::thread t(&Graph::hasHC, g); // multithread
-        t.detach(); // seperates the thread from main thread
+        threads.push_back(std::thread(&Graph::hasHC, g));
+
         return;
     }
 
@@ -222,7 +221,7 @@ int main() {
     std::vector<int> primes;
     std::string str;
     int prime;
-    int primeLimit = 61; // max number to read in
+    int primeLimit = 101; // max number to read in
 
     if (!inFile.is_open()) {
         std::cerr << "Could not open file " << primeFile << std::endl;
@@ -238,7 +237,7 @@ int main() {
     inFile.close();
 
 
-    // primes = {31}; // manual setup of primes vector
+    primes = {29}; // manual setup of primes vector
 
 
     // generate combinations
@@ -247,12 +246,23 @@ int main() {
         bool goNext = false;
         bool* nxtPtr = &goNext;
 
-        for (int k = 2; k <= N/2 + 1; k ++) { // TODO int k = 2, changing to 4 for manual test
+        for (int k = 2; k <= N/2 + 1; k ++) { 
             if (goNext) {
                 break;
             }
+
+            std::cout << "Starting N=" << n << " with k=" << k << std::endl; // debugger
+            
             generateCombinations(0, k, nxtPtr);
+
+            for (auto &t : threads) {
+                t.join();
+            }
+            threads.clear();
         }
+        // std::time_t curTime = time(0);
+        // double foundTime = curTime - startTime;
+        // printf("Run Time: %.3f seconds.", foundTime);
     }
 
 
