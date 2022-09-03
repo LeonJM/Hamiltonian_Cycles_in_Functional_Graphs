@@ -18,6 +18,7 @@ std::string resultFile = "results_final-draft_V3d.csv";
 
 std::ifstream inFile(primeFile);
 std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
+std::ofstream logFile("log.csv",  std::ios::out | std::ios::app);
 
 
 int N; // number of vertices
@@ -42,6 +43,8 @@ class Graph {
     int inDegreeCount;
     bool* ptr;
 
+    std::string constantsStr = "";  // logger
+
     public:
         Graph(std::vector<int> constants, bool* ptr) {
             adjList = new std::list<int>[N];
@@ -50,6 +53,12 @@ class Graph {
             this->ptr = ptr;
             addEdges(constants);
             countInDegrees();
+
+            // logger
+            for (int i : constants) {
+                constantsStr += std::to_string(i);
+                constantsStr += ", ";
+            }
         }
 
         // debugging function
@@ -69,13 +78,23 @@ class Graph {
         void hasHC() {
             if (inDegreeCount != N) return; // there are nodes that has no indegrees
 
+            // TODO: something here that checks whether a graph is connected or not
+
             int *path = new int[N];
             for (int i = 0; i < N; i ++) {
                 path[i] = -1;
             }
 
+            // logger
+            std::string startingStr = "Starting... " + constantsStr;
+            logFile << startingStr << "\n" << std::flush;
+
             path[0] = 0; // start HC from vertex 0
             hasHCUtil(path, 1); // no need to start at vertex 0 - expensive process
+
+            // logger
+            std::string finishedStr = "    Finished... " + constantsStr;
+            logFile << finishedStr << "\n" << std::flush;
         }
 
     private:
@@ -140,6 +159,10 @@ class Graph {
                         return true;
                     }
 
+                    // logger
+                    std::string foundStr = "        FOUND " + constantsStr;
+                    logFile << foundStr << "\n" << std::flush;
+
                     *ptr = true; // found a HC for current N
                     writeToOutFile(path);
 
@@ -189,11 +212,8 @@ class Graph {
 void generateCombinations(int offset, int k, bool* ptr) {
     //base case
     if (k == 0) {
-        // printCombination(); // debugger
         Graph g(combination, ptr);
-        // g.printAdjList(); // debugger
         threads.push_back(std::thread(&Graph::hasHC, g));
-
         return;
     }
 
@@ -201,6 +221,7 @@ void generateCombinations(int offset, int k, bool* ptr) {
     for (int i = offset; i <= N - k; ++ i) {
         if (*ptr) {
             combination.clear();
+            combination.push_back(0); // permanent constant in combination
             break;
         }
         combination.push_back(i);
@@ -214,7 +235,7 @@ int main() {
     // display the start time
     std::time_t startTime = time(0);
     std::string timestamp = ctime(&startTime);
-    std::cout << "Program Start at " << timestamp << std::endl;
+    logFile << "Program Start at " << timestamp << "\n" << std::flush; // logger
 
 
     // source prime numbers
@@ -237,7 +258,10 @@ int main() {
     inFile.close();
 
 
-    primes = {29}; // manual setup of primes vector
+    primes = {61}; // manual setup of primes vector
+
+
+    combination.push_back(0); // the permanent function's constant
 
 
     // generate combinations
@@ -251,28 +275,27 @@ int main() {
                 break;
             }
 
-            std::cout << "Starting N=" << n << " with k=" << k << std::endl; // debugger
+            logFile << "Starting N=" << n << " with k=" << k << "\n" << std::flush; // logger
             
-            generateCombinations(0, k, nxtPtr);
+            generateCombinations(1, k-1, nxtPtr); // offset should be at 1 as 0 should be permanent
 
             for (auto &t : threads) {
                 t.join();
             }
             threads.clear();
         }
-        // std::time_t curTime = time(0);
-        // double foundTime = curTime - startTime;
-        // printf("Run Time: %.3f seconds.", foundTime);
     }
-
-
-    outFile.close();
 
 
     // display the run time
     std::time_t endTime = time(0);
     double runTime = endTime - startTime;
-    printf("Run Time: %.3f seconds.", runTime);
+    logFile << "Run Time: " << runTime << " seconds\n" << std::flush; // logger
+
+
+    outFile.close();
+    logFile.close();
+
 
     return 0;
 }
