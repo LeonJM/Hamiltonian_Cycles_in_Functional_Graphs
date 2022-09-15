@@ -189,7 +189,7 @@ class Graph {
             return false;
         }
 
-        // Save HC sequence to outFile
+        // save HC sequence to outFile
         void writeToOutFile(int path[]) {
             outFile << N << ", ";
             outFile << constants.size() << ", ";
@@ -201,6 +201,32 @@ class Graph {
                 outFile << path[i] << " -> ";
             }
             outFile << 0 << "\n";
+        }
+
+
+        // utility function
+        // TODO: may be redundant
+        void traverse(int u, bool visited[]) {
+            visited[u] = true;
+            for (int v : adjList[u]) {
+                if (!visited[v]) traverse(v, visited);
+            }
+        }
+
+
+        // graph connectedness
+        // TODO: may be redundant
+        bool isConnected() {
+            bool *visited = new bool[N];
+            for (int u = 0; u < N; u ++) {
+                for (int i = 0; i < N; i ++) {
+                    visited[i] = false;
+                }
+                traverse(u, visited); // dfs
+                for (int i = 0; i < N; i ++) {
+                    if (!visited[i]) return false; // the graph is not connected
+                }
+            }
         }
 };
 
@@ -232,6 +258,23 @@ void generateCombinations(int offset, int k, bool* ptr) {
 
 
 int main() {
+    // user inputs
+    std::string primeInput;
+    std::cout << "Enter prime: ";
+    std::cin >> primeInput;
+    int kInput;
+    std::cout << "Enter initial k: ";
+    std::cin >> kInput;
+
+    int switchCase = 0;
+    if (primeInput[0] == '-') {
+        switchCase = 1;
+        primeInput.erase(0,1);
+    } else {
+        switchCase = 2;
+    }
+
+
     // display the start time
     std::time_t startTime = time(0);
     std::string timestamp = ctime(&startTime);
@@ -242,23 +285,34 @@ int main() {
     std::vector<int> primes;
     std::string str;
     int prime;
-    int primeLimit = 101; // max number to read in
+    int primeLimit = stoi(primeInput); // max number to read in
 
     if (!inFile.is_open()) {
         std::cerr << "Could not open file " << primeFile << std::endl;
         return 1;
     }
 
-    while (std::getline(inFile, str, ',')) {
-        prime = stoi(str);
-        if (prime > primeLimit) break;
-        primes.push_back(prime);
+    switch (switchCase) {
+        case 1:
+            while (std::getline(inFile, str, ',')) {
+                prime = stoi(str);
+                if (prime > primeLimit) break;
+                primes.push_back(prime);
+            }
+
+            break;
+
+        case 2:
+            primes = {stoi(primeInput)}; // manual setup of primes vector 
+            break;
+
+        default:
+            std::cout << "Premature end" << std::endl;
+            return 0;
     }
 
+
     inFile.close();
-
-
-    primes = {61}; // manual setup of primes vector
 
 
     combination.push_back(0); // the permanent function's constant
@@ -270,7 +324,7 @@ int main() {
         bool goNext = false;
         bool* nxtPtr = &goNext;
 
-        for (int k = 2; k <= N/2 + 1; k ++) { 
+        for (int k = kInput; k <= N/2 + 1; k ++) { 
             if (goNext) {
                 break;
             }
