@@ -47,6 +47,7 @@ class Graph {
             this->connected = this->isConnected();
         }
 
+        // HC computation
         void hasHC() {
             if (!this->connected) return;
 
