@@ -47,16 +47,30 @@ class Graph {
             this->connected = this->isConnected();
         }
 
+        // destructor - only use when single threading
+        // ~Graph() {
+        //     this->clean();
+        // }
+
+        // connected getter
+        bool getConnected() {
+            if (!this->connected) {
+                this->clean();
+                return false;
+            }
+            return true;
+        }
+
         // HC computation
         void hasHC() {
-            if (!this->connected) return;
-
             short int *path = new short int[N];
             for (unsigned short int i = 0; i < N; i ++) {
                 path[i] = -1;
             }
 
             logFile << "Starting... " << constantsStr << "\n" << std::flush;
+
+            // std::time_t tTimeStart = time(0);
             
             path[0] = 0;
             this->hasHCUtil(path, 1);
@@ -188,7 +202,9 @@ void generateCombinations(unsigned short int offset, unsigned short int k, bool 
     // base case
     if (k == 0) {
         Graph g(combination, p);
+        if (!g.getConnected()) return;
         threads.push_back(std::thread(&Graph::hasHC, g));
+        // g.hasHC();
         return;
     }
 
@@ -262,7 +278,6 @@ int main() {
     
     for (unsigned short int n : primes) {
         N = n;
-        // *goNext = false;
         goNext = false;
 
         for (unsigned short int k = initK; k <= N/2 + 1; k ++) {
