@@ -7,7 +7,7 @@
 
 
 int N = 29; // input here
-std::vector<int> constants = {0,1,2,12}; // input here
+std::vector<int> constants = {0, 1, 2, 3}; // input here
 
 
 class Graph {
@@ -25,6 +25,7 @@ class Graph {
         }
 
         void printAdjList() {
+            std::cout << "Graph connectedness: " << isConnected() << std::endl;
             std::cout << "Number of indegrees " << inDegreeCount << std::endl;
             for (int i = 0; i < N; i ++) {
                 std::cout << "Vertex " << i << " -> ";
@@ -61,6 +62,31 @@ class Graph {
                     }
                 }
             }
+        }
+
+        // utility function
+        void traverse(int u, bool visited[]) {
+            visited[u] = true;
+            for (int v : adjList[u]) {
+                if (!visited[v]) traverse(v, visited);
+            }
+        }
+
+
+        // graph connectedness
+        bool isConnected() {
+            std::cout << "Checking connectedness... "; 
+            bool *visited = new bool[N];
+            for (int u = 0; u < N; u ++) {
+                for (int i = 0; i < N; i ++) {
+                    visited[i] = false;
+                }
+                traverse(u, visited); // dfs
+                for (int i = 0; i < N; i ++) {
+                    if (!visited[i]) return false; // the graph is not connected
+                }
+            }
+            return true;
         }
 };
 

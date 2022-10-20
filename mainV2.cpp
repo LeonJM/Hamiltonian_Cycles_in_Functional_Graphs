@@ -13,7 +13,7 @@
 
 
 std::string primeFile = "primes1000.txt";
-std::string resultFile = "results_final-draft_V3.csv";
+std::string resultFile = "results_final-draft_V3d.csv";
 
 std::ifstream inFile(primeFile);
 std::ofstream outFile(resultFile, std::ios::out | std::ios::app);
@@ -192,9 +192,9 @@ void generateCombinations(int offset, int k, bool* ptr) {
         // printCombination(); // debugger
         Graph g(combination, ptr);
         // g.printAdjList(); // debugger
-        // g.hasHC();
-        std::thread t(&Graph::hasHC, g); // multithread
-        t.detach(); // seperates the thread from main thread
+        g.hasHC();
+        // std::thread t(&Graph::hasHC, g); // multithread
+        // t.detach(); // seperates the thread from main thread
         return;
     }
 
@@ -238,7 +238,7 @@ int main() {
     inFile.close();
 
 
-    // primes = {31}; // manual setup of primes vector
+    primes = {31}; // manual setup of primes vector
 
 
     // generate combinations

@@ -78,7 +78,7 @@ class Graph {
         void hasHC() {
             if (inDegreeCount != N) return; // there are nodes that has no indegrees
 
-            // TODO: something here that checks whether a graph is connected or not
+            if (!isConnected()) return; // graph is not connected
 
             int *path = new int[N];
             for (int i = 0; i < N; i ++) {
@@ -227,6 +227,7 @@ class Graph {
                     if (!visited[i]) return false; // the graph is not connected
                 }
             }
+            return true;
         }
 };
 

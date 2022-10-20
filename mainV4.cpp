@@ -69,8 +69,6 @@ class Graph {
             }
 
             logFile << "Starting... " << constantsStr << "\n" << std::flush;
-
-            // std::time_t tTimeStart = time(0);
             
             path[0] = 0;
             this->hasHCUtil(path, 1);
