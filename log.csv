@@ -1,0 +1,187 @@
+Program start at Sat Oct 22 15:27:08 2022
+
+Starting N=5 with k=2
+Starting N=5 with k=3
+Starting... 0, 1, 2, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 
+    Finished... 0, 1, 2, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:27:19 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:35:20 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:38:23 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:39:55 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:44:34 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 15:53:14 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:02:17 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:12:01 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:15:17 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:21:05 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:21:54 2022
+
+Starting N=2 with k=2
+Starting... 0, 1, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 
+    Finished... 0, 1, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:22:02 2022
+
+Starting N=3 with k=2
+Starting... 0, 2, 
+~~~~~~~~~~~~~~ FOUND 0, 2, 
+    Finished... 0, 2, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:22:09 2022
+
+Starting N=5 with k=2
+Starting N=5 with k=3
+Starting... 0, 1, 2, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 
+    Finished... 0, 1, 2, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:23:22 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:23:34 2022
+
+Starting N=11 with k=2
+Starting N=11 with k=3
+Starting... 0, 1, 7, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 7, 
+    Finished... 0, 1, 7, 
+Run time: 6 seconds
+
+Program start at Sat Oct 22 16:24:57 2022
+
+Starting N=11 with k=2
+Starting N=11 with k=3
+Starting... 0, 1, 7, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 7, 
+    Finished... 0, 1, 7, 
+Run time: 0 seconds
+
+Program start at Sat Oct 22 16:28:05 2022
+
+Starting N=13 with k=2
+Starting N=13 with k=3
+Starting... 0, 2, 4, 
+    Finished... 0, 2, 4, 
+Starting... 0, 3, 8, 
+    Finished... 0, 3, 8, 
+Starting... 0, 5, 10, 
+    Finished... 0, 5, 10, 
+Starting... 0, 6, 12, 
+    Finished... 0, 6, 12, 
+Starting N=13 with k=4
+Starting... 0, 1, 2, 4, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 4, 
+    Finished... 0, 1, 2, 4, 
+Run time: 1 seconds
+
+Program start at Sat Oct 22 16:38:11 2022
+
+Starting N=17 with k=2
+Starting N=17 with k=3
+Starting N=17 with k=4
+Starting... 0, 1, 2, 3, 
+    Finished... 0, 1, 2, 3, 
+Starting... 0, 1, 2, 8, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 8, 
+    Finished... 0, 1, 2, 8, 
+Run time: 14 seconds
+
+Program start at Sat Oct 22 16:39:17 2022
+
+Starting N=23 with k=2
+Starting N=23 with k=3
+Starting N=23 with k=4
+Starting... 0, 1, 2, 19, 

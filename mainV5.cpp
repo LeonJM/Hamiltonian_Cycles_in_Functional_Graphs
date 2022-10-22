@@ -2,15 +2,19 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <list>
 
-const int N = 5;
+const int N = 7;
 int grid[N][N] = {
-    {0, 1, 1, 0, 0},
-    {0, 0, 1, 1, 0},
-    {1, 1, 0, 0, 1},
-    {1, 1, 0, 0, 1},
-    {0, 1, 1, 1, 0},
+    {0, 1, 0, 0, 0, 1, 0},
+    {0, 0, 1, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1, 1, 0},
+    {1, 0, 1, 0, 0, 0, 0},
+    {1, 0, 1, 1, 0, 0, 0},
+    {0, 0, 1, 0, 1, 0, 0},
+    {0, 1, 1, 0, 0, 0, 0},
 };
+std::list<int> *adjList; // todo
 
 std::unordered_map<std::string, std::vector<int>> DP;
 
@@ -34,31 +38,68 @@ std::string myToString(int v, std::vector<int> c) {
 }
 
 void HeldKarp(std::vector<int> comb) {
-    // init case
-    if (comb.empty()) {
+
+    if (comb.empty()) {     // init case
+
         for (int i = 1; i < N; i ++) {
-            // memorsise i-{} = 0->i
-            std::cout << i << "-{} := " << 0 << "->" << i << std::endl; 
-        }
-    } else {
-
-        for (int v = 1; v < N; v ++) {
-            if (std::find(comb.begin(), comb.end(), v) != comb.end()) {
-                continue;
+            std::string key = myToString(i, {});
+            // memorise
+            if (grid[0][i]) {    // adjacency matrix
+            // if (std::find(adjList[0].begin(), adjList[0].end(), i) != adjList[0].end()) {   // adjacency list
+                DP[key] = {0,i};
+            } else {
+                DP[key] = {-1};
             }
-            std::cout << v << "-{";
-            printCombination(comb);
-            std::cout << "}" << std::endl;
-            for (int u = 0; u < comb.size(); u ++) {
+            std::cout << i << "-{} := "; printCombination(DP[key]); std::cout << std::endl;     // debug
+        }
 
+    } else if (comb.size() == N-1) {  // algorithm output
+
+        std::vector<int> path;
+        for (int u = 0; u < comb.size(); u ++) {
                 int tempU = comb[u];
                 std::vector<int> tempComb = comb;
                 tempComb.erase(tempComb.begin()+u);
-                std::cout << tempU << "-{";
-                printCombination(tempComb);
-                std::cout << "} ->" << v << std::endl;
-                // v-S = u-S* -> v
+                std::string subProblem = myToString(tempU, tempComb);
 
+                if (DP[subProblem].size() == 1 || grid[tempU][0] == 0) {    // invalid
+                // if (DP[subProblem].size() == 1 || std::find(adjList[tempU].begin(), adjList[tempU].end(), 0) != adjList[tempU].end()) {     // invalid // adjacency list
+                    continue;
+                } else {
+                    path = DP[subProblem];
+                    path.push_back(0);
+                    printCombination(path);     // debug
+                    // save results
+                    return;
+                }
+            }
+
+    } else {    // build the DP table
+
+        for (int v = 1; v < N; v ++) {
+            if (std::find(comb.begin(), comb.end(), v) != comb.end()) {     // if v in subset skip
+                continue;
+            }
+            std::string key = myToString(v, comb);
+            bool foundPath = false;
+            std::cout << v << "-{"; printCombination(comb); std::cout << "}" << std::endl;      // debug
+            for (int u = 0; u < comb.size() && !foundPath; u ++) {
+                int tempU = comb[u];
+                std::vector<int> tempComb = comb;
+                tempComb.erase(tempComb.begin()+u);
+
+                // memorise
+                std::string subProblem = myToString(tempU, tempComb);
+                if (DP[subProblem].size() == 1 || grid[tempU][v] == 0) {    // invalid
+                // if (DP[subProblem].size() == 1 || std::find(adjList[tempU].begin(), adjList[tempU].end(), v) != adjList[tempU].end()) {    // invalid // adjacency list
+                    DP[key] = {-1};
+                } else {
+                    foundPath = true;
+                    DP[key] = DP[subProblem];
+                    DP[key].push_back(v);
+                }
+
+            printCombination(DP[key]); std::cout << std::endl;      // debug
 
             }
             std::cout << std::endl;
@@ -87,14 +128,8 @@ void generateCombinations(int offset, int k) {
 
 int main() {
 
-    // for (int k = 0; k < N-1; k ++) generateCombinations(1,k);
-    std::string temp = myToString(42, {0,1,2});
-    std::cout << temp << std::endl;
-    DP[temp] = {0,1,2,4,3,0};
-    for (int i : DP[temp]) {
-        std::cout << i << ",";
-    }
-    std::cout << std::endl;
+    for (int k = 0; k < N; k ++) generateCombinations(1,k);
+    
 
     return 0;
 }
