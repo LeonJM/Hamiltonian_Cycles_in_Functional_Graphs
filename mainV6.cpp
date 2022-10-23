@@ -1,3 +1,5 @@
+// g++ -o filename filename.cpp -std=c++17
+
 #include <iostream>
 #include <list>
 #include <vector>
@@ -6,6 +8,7 @@
 #include <fstream>
 #include <ctime>
 #include <cmath>
+#include <thread>
 
 
 std::ofstream logFile("log.csv", std::ios::out | std::ios::app);
@@ -23,10 +26,22 @@ void printCombination(std::vector<unsigned short int> c) {
     }
 }
 
+// debug function
+bool checkCombinationSequential(std::vector<unsigned short int> c) {
+    for (unsigned short int i = 0; i < c.size() - 1; i ++) {
+        if (c[i+1] - c[i] != 1) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 class Graph {
     std::list<unsigned short int> *adjList;
     bool *found;
     bool connected;
+    bool searched;
 
     std::vector<unsigned short int> vertexCombination;
     std::unordered_map<std::string, std::vector<unsigned short int>> DP;
@@ -41,6 +56,7 @@ class Graph {
             found = p;
             addEdges(c);
             connected = isConnected();
+            searched = false;
         }
 
         // destructor
@@ -56,9 +72,18 @@ class Graph {
         // HC computation
         void computeHC() {
             logFile << "Starting... " << constantsStr << "\n" << std::flush;
+            // logFile << "combination sequential: " << checkCombinationSequential(functionCombination) << "\n" << std::flush;    // debug
+            std::vector<std::thread> threads;
 
-            for (unsigned short int k = 0; k < N; k ++) {   // k is the set size, offset starts at 1 since origin vertex is 0. Held-Karp uses subsets.
-                generateVertexCombinations(1, k);   
+            // Dynamic Programming approach through Held-Karp
+            threads.push_back(std::thread(&Graph::startDP, this));
+
+            // Backtracking approach
+            threads.push_back(std::thread(&Graph::startBacktracking, this));
+
+            // Wait for the threads to finish
+            for (auto &t : threads) {
+                t.join();
             }
 
             logFile << "    Finished... " << constantsStr << "\n" << std::flush;
@@ -66,6 +91,26 @@ class Graph {
         }
 
     private:
+        void startDP() {
+            std::cout << "Starting Held-Karp" << std::endl;     // debug
+                for (unsigned short int k = 0; k < N; k ++) {   // k is the set size, offset starts at 1 since origin vertex is 0. Held-Karp uses subsets.
+                generateVertexCombinations(1, k);   
+            }
+            searched = true;
+        }
+
+        void startBacktracking() {
+            std::cout << "Starting Backtracking" << std::endl;     // debug 
+            unsigned short int *path = new unsigned short int[N];  
+            for (unsigned short int i = 0; i < N; i ++) {
+                path[i] = N;    // placeholder, no sequence should have vertex N
+            }
+            path[0] = 0; // starting vertex
+            backtracking(path, 1);
+            searched = true;
+            delete path;
+        }
+
         // add edge from x to f(x)
         void addEdges(std::vector<unsigned short int> c) {
             for (unsigned short int a : c) {
@@ -125,7 +170,7 @@ class Graph {
 
             // recursive case
             for (unsigned short int i = offset; i <= N - k; ++i) {
-                if (*found) return;     // once a HC is found, finish
+                if (*found || searched) return;     // once a HC is found, finish
                 vertexCombination.push_back(i);
                 generateVertexCombinations(i + 1, k - 1);
                 vertexCombination.pop_back();
@@ -157,6 +202,7 @@ class Graph {
                     } else {
                         std::vector<unsigned short int> path;
                         *found = true;
+                        std::cout << "FOUND w/ Held-Karp" << std::endl;     // debug
                         path = DP[subProblem];
                         path.push_back(0);
                         logFile << "~~~~~~~~~~~~~~ FOUND " << constantsStr << "\n" << std::flush;
@@ -197,7 +243,62 @@ class Graph {
             }
         }
 
-        // save results to csv file
+        // Backtracking algorithm
+        bool backtracking(unsigned short int path[], unsigned short int pos) {
+            // base case
+            if (pos == N) {
+                if (std::find(adjList[path[pos-1]].begin(), adjList[path[pos-1]].end(), 0) != adjList[path[pos-1]].end()) {
+                    
+                    *found = true;
+                    std::cout << "FOUND w/ Backtracking" << std::endl;     // debug
+
+                    logFile << "~~~~~~~~~~~~~~ FOUND " << constantsStr << "\n" << std::flush;
+
+                    saveResults(path);
+
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            // recursive case
+            for (unsigned short int v = 0; v < N; v ++) {
+                if (*found || searched) return true;
+
+                if (isSafe(v, path, pos)) {
+                    path[pos] = v;
+                    if (backtracking(path, pos + 1)) {
+                        return true;
+                    }
+                    path[pos] = N;
+                }
+            }
+
+            return false;
+        }
+
+        // check edge connections for backtracking()
+        bool isSafe(unsigned short int v, unsigned short int path[], unsigned short int pos) {
+            // check if last vertex added to path connects to v
+            bool connect = (std::find(adjList[path[pos-1]].begin(), adjList[path[pos-1]].end(), v) 
+                != adjList[path[pos-1]].end());
+
+            if (!connect) {
+                return false;
+            }
+
+            // check if v has already been included in path
+            for (unsigned short int i = 0; i < pos; i ++) {
+                if (path[i] == v) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // save results to csv file - vector argument
         void saveResults(std::vector<unsigned short int> path) {
             outFile << "N=" << N << " - ";
             outFile << "k=" << k << " - ";
@@ -209,12 +310,25 @@ class Graph {
             outFile << "\n" << std::flush;
         }
 
+        // save results to csv file - array
+        void saveResults(unsigned short int path[]) {
+            outFile << "N=" << N << " - ";
+            outFile << "k=" << k << " - ";
+            outFile << "functions=" << constantsStr << "- ";
+            outFile << "path= ";
+            for (unsigned short int i = 0; i < N; i ++) {
+                outFile << path[i] << " -> ";
+            }
+            outFile << "0\n" << std::flush;
+        }
+
 };
 
 
 void generateFunctionCombinations(unsigned short int offset, unsigned short int k, bool *p) {
     // base case
     if (k == 0) {
+        if (checkCombinationSequential(functionCombination)) return;    // skip sequential functions
         Graph g(functionCombination, p);
         if (!g.getConnected()) return;  // skip disconnected graphs
         // printCombination(functionCombination); std::cout << std::endl; // debug
