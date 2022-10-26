@@ -26,13 +26,17 @@ void printCombination(std::vector<unsigned short int> c) {
     }
 }
 
-// debug function
+// helper function
 bool checkCombinationSequential(std::vector<unsigned short int> c) {
-    for (unsigned short int i = 0; i < c.size() - 1; i ++) {
+    if (c.size() >= 3 && c[c.size()-1]/2 < c[c.size()-2])  {    // last constant should be bigger {0, a, b, 2b}
+        return true;     
+    }
+    for (unsigned short int i = 0; i < c.size() - 1; i ++) {    // sequence should not be sequential {0, 1, 2, 3}
         if (c[i+1] - c[i] != 1) {
             return false;
         }
     }
+
 
     return true;
 }
@@ -352,9 +356,12 @@ void generateFunctionCombinations(unsigned short int offset, unsigned short int 
 
 int main() {
 
-    // user discrepency to type in valid input
+    // user discrepancy to type in valid input
     std::cout << "Enter N: ";
     std::cin >> N;
+    unsigned short int kInput;
+    std::cout << "Enter k: ";
+    std::cin >> kInput;
 
     // display start time
     std::time_t startTime = time(0);
@@ -365,7 +372,7 @@ int main() {
     bool found = false;
     functionCombination.push_back(0);   // fixed function
 
-    for (unsigned short int k = 2; k <= N/2 + 1; k ++) {
+    for (unsigned short int k = kInput; k <= N/2 + 1; k ++) {
         if (found) {
             break;
         }
