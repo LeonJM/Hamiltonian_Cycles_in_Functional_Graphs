@@ -1,4 +1,4 @@
-#Hamiltonian Cycles in Families of Functional Graphs of Quadratic Polynomials over Prime Fields
+# Hamiltonian Cycles in Families of Functional Graphs of Quadratic Polynomials over Prime Fields
 This is the repository as mentioned in the MQU 2022 software engineering thesis titled *Hamiltonian Cycles in Families of Functional Graphs of Quadratic Polynomials over Prime Fields*, written by [me](https://github.com/LeonJM) and supervised by [Professor Bernard Mans](https://researchers.mq.edu.au/en/persons/bernard-mans).
 
 ## Overview
