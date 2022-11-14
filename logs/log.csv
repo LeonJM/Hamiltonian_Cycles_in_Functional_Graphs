@@ -1,0 +1,197 @@
+Program start at Sun Oct 23 01:00:34 2022
+
+Starting N=2 with k=2
+Starting... 0, 1, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 
+    Finished... 0, 1, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:00:51 2022
+
+Starting N=3 with k=2
+Starting... 0, 2, 
+~~~~~~~~~~~~~~ FOUND 0, 2, 
+    Finished... 0, 2, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:01:50 2022
+
+Starting N=5 with k=2
+Starting N=5 with k=3
+Starting... 0, 1, 2, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 
+    Finished... 0, 1, 2, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:01:57 2022
+
+Starting N=7 with k=2
+Starting N=7 with k=3
+Starting... 0, 1, 5, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 5, 
+    Finished... 0, 1, 5, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:02:12 2022
+
+Starting N=11 with k=2
+Starting N=11 with k=3
+Starting... 0, 1, 7, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 7, 
+    Finished... 0, 1, 7, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:02:39 2022
+
+Starting N=13 with k=2
+Starting N=13 with k=3
+Starting... 0, 2, 4, 
+    Finished... 0, 2, 4, 
+Starting... 0, 3, 8, 
+    Finished... 0, 3, 8, 
+Starting... 0, 5, 10, 
+    Finished... 0, 5, 10, 
+Starting... 0, 6, 12, 
+    Finished... 0, 6, 12, 
+Starting N=13 with k=4
+Starting... 0, 1, 2, 4, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 4, 
+    Finished... 0, 1, 2, 4, 
+Run time: 1 seconds
+
+Program start at Sun Oct 23 01:07:35 2022
+
+Starting N=13 with k=2
+Starting N=13 with k=3
+Starting... 0, 2, 4, 
+    Finished... 0, 2, 4, 
+Starting... 0, 3, 8, 
+    Finished... 0, 3, 8, 
+Starting... 0, 5, 10, 
+    Finished... 0, 5, 10, 
+Starting... 0, 6, 12, 
+    Finished... 0, 6, 12, 
+Starting N=13 with k=4
+Starting... 0, 1, 2, 4, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 4, 
+    Finished... 0, 1, 2, 4, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:08:18 2022
+
+Starting N=17 with k=2
+Starting N=17 with k=3
+Starting N=17 with k=4
+Starting... 0, 1, 2, 3, 
+    Finished... 0, 1, 2, 3, 
+Starting... 0, 1, 2, 8, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 8, 
+    Finished... 0, 1, 2, 8, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:08:27 2022
+
+Starting N=19 with k=2
+Starting N=19 with k=3
+Starting N=19 with k=4
+Starting... 0, 1, 2, 8, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 8, 
+    Finished... 0, 1, 2, 8, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 01:08:57 2022
+
+Starting N=23 with k=2
+Starting N=23 with k=3
+Starting N=23 with k=4
+Starting... 0, 1, 2, 19, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 2, 19, 
+    Finished... 0, 1, 2, 19, 
+Run time: 0 seconds
+
+Program start at Sun Oct 23 02:01:09 2022
+
+Starting N=29 with k=2
+Starting N=29 with k=3
+Starting N=29 with k=4
+Starting... 0, 1, 2, 6, 
+
+Program start at Sun Oct 23 02:01:25 2022
+
+Starting N=29 with k=2
+Starting N=29 with k=3
+Starting N=29 with k=4
+Starting... 0, 1, 2, 6, 
+    Finished... 0, 1, 2, 6, 
+Starting... 0, 1, 2, 12, 
+    Finished... 0, 1, 2, 12, 
+Starting... 0, 1, 2, 13, 
+    Finished... 0, 1, 2, 13, 
+Starting... 0, 1, 2, 18, 
+
+Program start at Sun Oct 23 02:54:13 2022
+
+Starting N=31 with k=2
+Starting N=31 with k=3
+Starting N=31 with k=4
+Starting... 0, 1, 3, 20, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 3, 20, 
+    Finished... 0, 1, 3, 20, 
+Run time: 13 seconds
+
+Program start at Sun Oct 23 02:55:11 2022
+
+Starting N=37 with k=2
+Starting N=37 with k=3
+Starting N=37 with k=4
+Starting... 0, 1, 2, 8, 
+    Finished... 0, 1, 2, 18, 
+Starting... 0, 1, 2, 19, 
+    Finished... 0, 1, 2, 19, 
+Starting... 0, 1, 2, 25, 
+    Finished... 0, 1, 2, 25, 
+Starting... 0, 1, 2, 28, 
+    Finished... 0, 1, 2, 28, 
+Starting... 0, 1, 3, 11, 
+    Finished... 0, 1, 3, 11, 
+Starting... 0, 1, 3, 24, 
+~~~~~~~~~~~~~~ FOUND 0, 1, 3, 24, 
+    Finished... 0, 1, 3, 24, 
+Run time: 10749 seconds
+
+Program start at Mon Oct 24 13:32:37 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 5, 
+Program start at Mon Oct 24 14:00:50 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 5, 
+Program start at Mon Oct 24 14:03:37 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 5, 
+Program start at Mon Oct 24 14:04:26 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 5, 
+Program start at Mon Oct 24 14:05:17 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 5, 
+Program start at Mon Oct 24 14:06:01 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 10, 
+Program start at Mon Oct 24 14:07:07 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 10, 
+Program start at Wed Oct 26 12:12:51 2022
+
+Starting N=41 with k=5
+Starting... 0, 1, 2, 4, 10, 
+Program start at Wed Oct 26 12:14:10 2022
+
+Starting N=53 with k=4
+Starting... 0, 1, 7, 34, 
